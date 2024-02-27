@@ -18,16 +18,24 @@ void main() {
   while (!salir) {
     print('1.- Registrar Transacción');
     print('2.- Ver Saldo y Estado Financiero');
-    print('3.- Establecer Metas y Presupuestos');
-    print('4.- Salir');
+    print('3.- Establecer Metas');
+    print('4.- Establecer Presupuestos');
+    print('5.- Salir');
     stdout.write("Ingrese el numero de la opcion a utilizar: ");
     String opcion = stdin.readLineSync() ?? '';
 
     switch (opcion) {
       case "1":
         try {
-          stdout.write('Ingrese el monto: ');
+          print("\n============ Nueva Transacción ==============");
+          stdout.write('Ingrese el monto de la transacción: ');
           monto = double.parse(stdin.readLineSync()!);
+
+          while (monto <= 0) {
+            print("\nError: El monto no puede ser negativo o cero.");
+            stdout.write('Ingrese el monto de la transacción: ');
+            monto = double.parse(stdin.readLineSync()!);
+          }
 
           stdout.write('Ingrese el categoria: ');
           categoria = stdin.readLineSync()!;
@@ -39,13 +47,17 @@ void main() {
           tipo = stdin.readLineSync()!;
 
           if (tipo.toLowerCase() == "ingreso") {
-            transaccion.agregarTransaccion(
-                Transaccion(monto, concepto, categoria, tipo));
+            transaccion.agregarTransaccion(Transaccion(
+              monto,
+              concepto,
+              categoria,
+              tipo,
+            ));
             saldoActual += monto;
             ingresos += monto;
+            transaccion.evaluarMetaAlcanzada(saldoActual);
             print("\nTransaccion Exitosa!\n");
-          }    
-          else if (tipo.toLowerCase() == "retiro") {
+          } else if (tipo.toLowerCase() == "retiro") {
             if (monto > saldoActual) {
               print("\nNo hay saldo suficiente para el retiro.\n");
             } else {
@@ -56,8 +68,7 @@ void main() {
               print(
                   "\nSe retiró \$$monto exitosamente con un Concepto de: $concepto\n");
             }
-          }
-           else {
+          } else {
             print(
                 "Tipo de transacción desconocida, debe seleccionar entre ingreso o retiro");
           }
@@ -69,8 +80,7 @@ void main() {
       case "2":
         if (transaccion.transacciones.isEmpty && transaccion.retiros.isEmpty) {
           print("\nNo hay transacciones realizadas en su cuenta.\n");
-        }
-         else {
+        } else {
           print(
               "\n============ Transacciones relaizadas (Ingresos) ==============");
 
@@ -83,8 +93,7 @@ void main() {
               "\n============ Transacciones relaizadas (Retiros) ==============");
           if (transaccion.retiros.isEmpty) {
             print("No hay retiros en su cuenta. Sigue ahorrando!");
-          }
-           else {
+          } else {
             for (Transaccion retiro in transaccion.retiros) {
               print(
                   "Retiro de \$${retiro.monto}, con categoría de ${retiro.categoria} y un concepto de ${retiro.concepto}");
@@ -99,9 +108,32 @@ void main() {
         break;
 
       case "3":
+        print("\n============ Establecer Meta Financiera ==============");
+        stdout.write('Ingresa el monto de la meta: ');
+        double montoMeta = double.parse(stdin.readLineSync()!);
+
+        while (montoMeta <= 0) {
+          print("\nError: El monto de la meta no puede ser negativo o cero.");
+          stdout.write('Ingresa el monto de la meta: ');
+          montoMeta = double.parse(stdin.readLineSync()!);
+        }
+
+        stdout.write('Ingresa el concepto de la meta: ');
+        String conceptoMeta = stdin.readLineSync()!;
+
+        // Crear una instancia de Meta
+        Meta nuevaMeta = Meta(montoMeta, conceptoMeta);
+
+        // Asociar la nueva meta con la próxima transacción
+        transaccion.meta = nuevaMeta;
+
+        print("Meta establecida con éxito\n");
         break;
 
       case "4":
+        break;
+
+      case "5":
         print("Hasta Luego!");
         salir = true;
         break;

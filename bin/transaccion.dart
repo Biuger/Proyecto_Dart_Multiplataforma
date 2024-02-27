@@ -3,8 +3,10 @@ class Transaccion {
   String tipo;
   String categoria;
   String concepto;
+  Meta? meta;
 
-  Transaccion(this.monto, this.concepto, this.categoria, this.tipo);
+  Transaccion(this.monto, this.concepto, this.categoria, this.tipo,
+      [this.meta]);
 
   List<Transaccion> transacciones = [];
   List<Transaccion> retiros = [];
@@ -16,16 +18,26 @@ class Transaccion {
   void agregarRetiro(Transaccion transaccion) {
     retiros.add(transaccion);
   }
+
+  void evaluarMetaAlcanzada(double saldoActual) {
+    if (meta != null && meta!.metaAlcanzada(saldoActual)) {
+      print("\n¡Felicidades! Has alcanzado tu meta: ${meta!.concepto}\n");
+    }
+  }
 }
 
-class Metas {
+class Meta {
   double monto;
   String concepto;
-  Metas(this.monto, this.concepto);
+  Meta(this.monto, this.concepto);
 
-  List<Metas> metas = [];
+  List<Meta> metas = [];
 
-  void agregarMeta(Metas meta) {
+  void agregarMeta(Meta meta) {
     metas.add(meta);
+  }
+
+  bool metaAlcanzada(double saldoActual) {
+    return saldoActual >= monto;
   }
 }
