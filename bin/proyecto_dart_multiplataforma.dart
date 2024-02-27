@@ -44,7 +44,8 @@ void main() {
             saldoActual += monto;
             ingresos += monto;
             print("\nTransaccion Exitosa!\n");
-          } else if (tipo.toLowerCase() == "retiro") {
+          }    
+          else if (tipo.toLowerCase() == "retiro") {
             if (monto > saldoActual) {
               print("\nNo hay saldo suficiente para el retiro.\n");
             } else {
@@ -55,7 +56,8 @@ void main() {
               print(
                   "\nSe retiró \$$monto exitosamente con un Concepto de: $concepto\n");
             }
-          } else {
+          }
+           else {
             print(
                 "Tipo de transacción desconocida, debe seleccionar entre ingreso o retiro");
           }
@@ -67,7 +69,8 @@ void main() {
       case "2":
         if (transaccion.transacciones.isEmpty && transaccion.retiros.isEmpty) {
           print("\nNo hay transacciones realizadas en su cuenta.\n");
-        } else {
+        }
+         else {
           print(
               "\n============ Transacciones relaizadas (Ingresos) ==============");
 
@@ -80,7 +83,8 @@ void main() {
               "\n============ Transacciones relaizadas (Retiros) ==============");
           if (transaccion.retiros.isEmpty) {
             print("No hay retiros en su cuenta. Sigue ahorrando!");
-          } else {
+          }
+           else {
             for (Transaccion retiro in transaccion.retiros) {
               print(
                   "Retiro de \$${retiro.monto}, con categoría de ${retiro.categoria} y un concepto de ${retiro.concepto}");
@@ -90,6 +94,7 @@ void main() {
           print("\nIngresos totales: \$$ingresos");
           print("Gastos totales: \$$gastos");
           print("Saldo actual: \$$saldoActual\n");
+          print("====================================\n");
         }
         break;
 
