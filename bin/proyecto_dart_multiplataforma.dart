@@ -7,6 +7,14 @@ void main() {
   String concepto = "";
   String tipo = "";
 
+  double montoMeta = 0.0;
+  String conceptoMeta = "";
+  double presupuestoMeta = 0.0;
+  List<double> metasCompletadas = [];
+  List<double> presupuestoMetas = [];
+  List<double> metas = [];
+  List<String> conceptosMetas = [];
+
   double saldoActual = 0.0;
   double ingresos = 0.0;
   double gastos = 0.0;
@@ -16,10 +24,10 @@ void main() {
   bool salir = false;
   print("\n!!! Sistema de gestion de finanzas personales !!!");
   while (!salir) {
-    print('1.- Registrar Transacción');
+    print('\n1.- Registrar Transacción');
     print('2.- Ver Saldo y Estado Financiero');
     print('3.- Establecer Metas');
-    print('4.- Establecer Presupuestos');
+    print('4.- Ver historial de metas');
     print('5.- Salir');
     stdout.write("Ingrese el numero de la opcion a utilizar: ");
     String opcion = stdin.readLineSync() ?? '';
@@ -55,7 +63,7 @@ void main() {
             ));
             saldoActual += monto;
             ingresos += monto;
-            transaccion.evaluarMetaAlcanzada(saldoActual);
+
             print("\nTransaccion Exitosa!\n");
           } else if (tipo.toLowerCase() == "retiro") {
             if (monto > saldoActual) {
@@ -102,35 +110,59 @@ void main() {
 
           print("\nIngresos totales: \$$ingresos");
           print("Gastos totales: \$$gastos");
-          print("Saldo actual: \$$saldoActual\n");
+          print("Saldo actual: \$$saldoActual");
           print("====================================\n");
         }
         break;
 
       case "3":
         print("\n============ Establecer Meta Financiera ==============");
-        stdout.write('Ingresa el monto de la meta: ');
-        double montoMeta = double.parse(stdin.readLineSync()!);
+  bool validar;
 
-        while (montoMeta <= 0) {
-          print("\nError: El monto de la meta no puede ser negativo o cero.");
-          stdout.write('Ingresa el monto de la meta: ');
-          montoMeta = double.parse(stdin.readLineSync()!);
-        }
+  do {
+    try {
+      stdout.write('Ingresa el costo total de la meta: ');
+      double montoMeta = double.parse(stdin.readLineSync()!);
 
+      if (montoMeta > 0) {
         stdout.write('Ingresa el concepto de la meta: ');
         String conceptoMeta = stdin.readLineSync()!;
+        stdout.write('Ingresa el presupuesto actual para la meta: ');
+        double presupuestoMeta = double.parse(stdin.readLineSync()!);
 
-        // Crear una instancia de Meta
-        Meta nuevaMeta = Meta(montoMeta, conceptoMeta);
-
-        // Asociar la nueva meta con la próxima transacción
-        transaccion.meta = nuevaMeta;
-
-        print("Meta establecida con éxito\n");
+        conceptosMetas.add(conceptoMeta);
+        metas.add(montoMeta);
+        metasCompletadas.add(presupuestoMeta);
+        presupuestoMetas.add(presupuestoMeta);
+        print("\nMeta establecida con éxito!\n");
+        validar = true;
+      } else {
+        print("\nError: El monto de la meta debe ser mayor a 0. Intenta nuevamente.\n");
+        validar = false;
+      }
+    } catch (e) {
+      print("\nError: Ingresa un número entero válido. Intenta nuevamente.\n");
+      validar = false;
+    }
+  } while (!validar);
         break;
 
       case "4":
+        print(
+            "\n================ HISTORIAL DE METAS Y PRESUPUESTOS =================");
+        for (int i = 0; i < metas.length; i++) {
+          if (metasCompletadas[i] >= metas[i] &&
+              (presupuestoMetas[i] + saldoActual) < metas[i]) {
+            print(
+                "Meta establecida: \$${metas[i]} con presupuesto de: \$${presupuestoMetas[i]} y un saldo bancario de \$${saldoActual} ( Felicidades ya completaste esta meta! )");
+          } else if ((presupuestoMetas[i] + saldoActual) >= metas[i]) {
+            print(
+                "Meta establecida: \$${metas[i]} con presupuesto de: \$${presupuestoMetas[i]} y un saldo bancario de \$${saldoActual} ( Felicidades ya completaste esta meta! )");
+          } else {
+            print(
+                "Meta establecida: \$${metas[i]} con presupuesto de: \$${presupuestoMetas[i]} y un saldo bancario de \$${saldoActual} ( Aún te faltan \$${(metas[i] - presupuestoMetas[i] - saldoActual)} )");
+          }
+        }
         break;
 
       case "5":
